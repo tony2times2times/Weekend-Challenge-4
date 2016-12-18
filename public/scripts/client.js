@@ -1,11 +1,13 @@
 $(function(){
   console.log('Document ready!');
-  enable();
   getTasks();
+  enable();
 });
 
 function enable(){
 $('#post-task').on('click',postTask);
+$('.complete').on('click', putTask);
+
 }
 
 function getTasks() {
@@ -18,6 +20,7 @@ function getTasks() {
             for (var i = 0; i < response.length; i++) {
               tasks.push(response[i]);
               printTasks(tasks);
+              enable();
             }
         },
         error: function() {
@@ -44,6 +47,22 @@ function postTask(){
     });
 }
 
+function putTask(){
+  var updateTask = {id:this.getAttribute('data')};
+  $.ajax({
+      type: "PUT",
+      url: '/putTask',
+      data: updateTask,
+      success: function(response) {
+          console.log('back from postTasks: ', response);
+          getTasks();
+      },
+      error: function() {
+              console.log("error with ajax call");
+          }
+  });
+}
+
 
 function printTasks(tasks){
   console.log("now printing tasks: " + tasks);
@@ -51,8 +70,8 @@ var allTasks = '<tr><td>Task</td><td>Date Created</td><td>Complete Task</td><td>
   for (var i = 0; i < tasks.length; i++) {
     allTasks += '<tr><td>' + tasks[i].task + '</td>';
     allTasks += '<td>' + tasks[i].created + '</td>';
-    allTasks += '<td><button type="button" class=complete> Complete </button> </td>';
-    allTasks += '<td><button type="button" class=delete> Delete </button> </td>';
+    allTasks += '<td><button type="button" class="complete" data="' + tasks[i].id + '"> Complete </button> </td>';
+    allTasks += '<td><button type="button" class="delete" data="' + tasks[i].id + '"> Delete </button> </td>';
   }
 $('#tasks').html(allTasks);
 }
