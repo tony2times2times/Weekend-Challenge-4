@@ -1,0 +1,14 @@
+
+table, td, thead, tr {
+  border: 1px solid black;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+thead, tr {
+  text-align: center;
+  padding: 5px;
+}
