@@ -98,19 +98,5 @@ app.put('/putTask', urlEncodedParser, function(req, res) {
 });
 
 
-// app.put('/putMesa', urlEncodedParser, function(req, res) {
-//     console.log('Updating: ', req.body);
-//     pg.connect(connectionString, function(err, client, done) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             console.log("mesa status: " + req.body.mesa_status);
-//             console.log('connected to database updating: ' + req.body);
-//             client.query('UPDATE mesa SET mesa_status =' + req.body.mesa_status + 'WHERE mesa_number =' + req.body.mesa_number);
-//             done();
-//             res.send('successful post mesa');
-//
-//         }
-//     });
-// });
+
 app.use(express.static('public'));
