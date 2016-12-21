@@ -5,8 +5,8 @@ $(function(){
 });
 
 function enable(){
-$('#post-task').on('click',postTask);
-$('.complete').on('click', putTask);
+$('#post-task').unbind().on('click',postTask);
+$('.complete').unbind().on('click', putTask);
 
 }
 
@@ -55,7 +55,7 @@ function putTask(){
       data: updateTask,
       success: function(response) {
           console.log('back from postTasks: ', response);
-          getTasks();
+          //getTasks();
       },
       error: function() {
               console.log("error with ajax call");

@@ -56,46 +56,85 @@ app.post('/postTask', urlEncodedParser, function(req, res) {
 });
 
 app.put('/putTask', urlEncodedParser, function(req, res) {
-    console.log('Adding new task', req.body);
+    console.log('Updating task: ', req.body);
+    //check the status and toggle it
+    toggle(req.body.id);
+    res.send('task updated');
+
+});
+
+//check the status and toggle it
+function toggle(incommingID) {
+  console.log('incommingID is: '+ incommingID);
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
             console.log(err);
         } else {
-            console.log('connected to database updating task ID: ' + req.body.id);
-            // check for active status and toggles it
-            var query = client.query("SELECT active from tasks WHERE id=" + req.body.id + ";");
-            //var databaseTask =
-
-            //console.log('match found: ' + databaseTask.active);
-            //client.query('UPDATE tasks SET (active) values($1, $2)', [req.body.task, true]);
-            done();
-            res.send(query);
-
+            console.log('connected to database searching for id: ' + incommingID);
+            // check for active status
+            var query = client.query("SELECT * from tasks WHERE id=" + incommingID + " ;");
+            var task = [];
+            query.on('row', function(row) {
+                task.push(row);
+            });
+            query.on('end', function() {
+                done();
+                //check status and call updateActive function with opposite value.
+                if (task[0].active) {
+                  console.log('Task is currently active changing to false.');
+                    updateActive('false', incommingID);
+                    return;
+                } else {
+                  console.log('Task is currently inactive changing to true.');
+                    updateActive('true', incommingID);
+                    return;
+                }
+            });
         }
-
     });
-});
+}
+//updates active status in data base
+function updateActive(newStatus, incommingID){
+  pg.connect(connectionString, function(err, client, done) {
+      if (err) {
+          console.log(err);
+      } else {
+          console.log('connected to database updating task ID: ' + incommingID);
+          console.log( 'New status: ' + newStatus);
+          var query = client.query("UPDATE tasks SET active=" + newStatus + " WHERE id=" + incommingID + " ;");
+          done();
+      }
+  });
+}
 
 app.put('/putTask', urlEncodedParser, function(req, res) {
-    console.log('Adding new task', req.body);
-    pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('connected to database updating task ID: ' + req.body.id);
-            // check for active status and toggles it
-            var query = client.query("SELECT active from tasks WHERE id=" + req.body.id + ";");
-            //var databaseTask =
+    console.log('Updating task: ', req.body);
+    //check the status and toggle it
+    toggle(req.body.id);
+    res.send('task updated');
 
-            //console.log('match found: ' + databaseTask.active);
-            //client.query('UPDATE tasks SET (active) values($1, $2)', [req.body.task, true]);
-            done();
-            res.send(query);
-
-        }
-
-    });
 });
+
+// app.put('/putTask', urlEncodedParser, function(req, res) {
+//     console.log('Adding new task', req.body);
+//     pg.connect(connectionString, function(err, client, done) {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             console.log('connected to database updating task ID: ' + req.body.id);
+//             // check for active status and toggles it
+//             var query = client.query("SELECT active from tasks WHERE id=" + req.body.id + ";");
+//             //var databaseTask =
+//
+//             //console.log('match found: ' + databaseTask.active);
+//             //client.query('UPDATE tasks SET (active) values($1, $2)', [req.body.task, true]);
+//             done();
+//             res.send(query);
+//
+//         }
+//
+//     });
+// });
 
 
 
