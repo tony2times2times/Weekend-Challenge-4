@@ -12,3 +12,36 @@ thead, tr {
   text-align: center;
   padding: 5px;
 }
+
+.false_button{
+  background: url("../images/checked.png") center no-repeat;
+  height: 25px;
+  width: 25px;
+  border: none;
+}
+.true_button{
+  background: url("../images/unchecked.png") center no-repeat;
+  height: 25px;
+  width: 25px;
+  border: none;
+}
+
+.delete{
+  background: url("../images/cyberman.png") center no-repeat;
+  height: 25px;
+  width: 33px;
+  border: none;
+}
+
+.false{
+  text-decoration: line-through
+}
+
+#first {
+  width : 750px;
+  text-align: left;
+}
+
+body {
+  text-align: center;
+}
