@@ -107,34 +107,21 @@ function updateActive(newStatus, incommingID){
   });
 }
 
-app.put('/putTask', urlEncodedParser, function(req, res) {
-    console.log('Updating task: ', req.body);
-    //check the status and toggle it
-    toggle(req.body.id);
+app.delete('/delTask', urlEncodedParser, function(req, res) {
+  pg.connect(connectionString, function(err, client, done) {
+      if (err) {
+          console.log(err);
+      } else {
+          console.log('connected to database updating task ID: ' + req.body.id);
+          var query = client.query("DELETE from tasks WHERE id=" + req.body.id + " ;");
+          done();
+      }
+  });
     res.send('task updated');
 
 });
 
-// app.put('/putTask', urlEncodedParser, function(req, res) {
-//     console.log('Adding new task', req.body);
-//     pg.connect(connectionString, function(err, client, done) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             console.log('connected to database updating task ID: ' + req.body.id);
-//             // check for active status and toggles it
-//             var query = client.query("SELECT active from tasks WHERE id=" + req.body.id + ";");
-//             //var databaseTask =
-//
-//             //console.log('match found: ' + databaseTask.active);
-//             //client.query('UPDATE tasks SET (active) values($1, $2)', [req.body.task, true]);
-//             done();
-//             res.send(query);
-//
-//         }
-//
-//     });
-// });
+
 
 
 

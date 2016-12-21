@@ -5,9 +5,14 @@ $(function(){
 });
 
 function enable(){
-$('#post-task').unbind().on('click',postTask);
+$('#post_task').unbind().on('click',postTask);
 $('.complete').unbind().on('click', putTask);
-
+$('.delete').unbind().on('click', delTask);
+$("#new_task").unbind().keydown(function(event){
+    if(event.keyCode == 13){
+        $("#post_task").click();
+    }
+});
 }
 
 function getTasks() {
@@ -30,9 +35,9 @@ function getTasks() {
 }
 
 function postTask(){
-  var newTask = {task:$('#new-task').val()};
+  var newTask = {task:$('#new_task').val()};
   console.log('sending a new task ' + newTask);
-    $('#new-task').val('');
+    $('#new_task').val('');
     $.ajax({
         type: "POST",
         url: '/postTask',
@@ -55,7 +60,7 @@ function putTask(){
       data: updateTask,
       success: function(response) {
           console.log('back from postTasks: ', response);
-          //getTasks();
+          getTasks();
       },
       error: function() {
               console.log("error with ajax call");
@@ -63,6 +68,21 @@ function putTask(){
   });
 }
 
+function delTask(){
+  var delTask = {id:this.getAttribute('data')};
+  $.ajax({
+      type: "DELETE",
+      url: '/delTask',
+      data: delTask,
+      success: function(response) {
+          console.log('back from delTasks: ', response);
+          getTasks();
+      },
+      error: function() {
+              console.log("error with ajax call");
+          }
+  });
+}
 
 function printTasks(tasks){
   console.log("now printing tasks: " + tasks);
