@@ -2,14 +2,18 @@
 <html>
   <head>
     <script src="scripts/vendors/jquery-3.1.1.min.js" charset="utf-8"></script>
+    <script src="scripts/vendors/jquery-ui.min.js" charset="utf-8"></script>
     <script src="scripts/client.js" charset="utf-8"></script>
+    <link rel="css/jquery-ui.min.css" href="css/master.css">
     <link rel="stylesheet" href="css/master.css">
     <title>TO DO</title>
   </head>
   <body>
-    <input type="text" placeholder="New Task" id='new_task'>
-    <button type="button" id='post_task'>Add New Task</button>
-    <div id="tasks">
+    <div id="display">
+      <input type="text" placeholder="New Task" id='new_task'>
+      <button type="button" id='post_task'>Add New Task</button>
+      <div id="tasks">
+    </div>
     </div>
   </body>
 </html>

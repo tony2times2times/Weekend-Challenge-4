@@ -45,3 +45,16 @@ thead, tr {
 body {
   text-align: center;
 }
+
+.dialog {
+  background: red;
+   opacity: .30;
+   filter: Alpha(Opacity=30);
+}
+
+.ui-dialog{
+  background:url('../images/danger.jpg' ) center no-repeat;
+  }​
+  modal {
+    height: 75%;
+  }
