@@ -46,15 +46,8 @@ body {
   text-align: center;
 }
 
-.dialog {
-  background: red;
-   opacity: .30;
-   filter: Alpha(Opacity=30);
-}
-
 .ui-dialog{
-  background:url('../images/danger.jpg' ) center no-repeat;
+  background: url("../images/cyberman.png") center no-repeat;
+  height: 100%;
+  vertical-align: text-bottom;
   }​
-  modal {
-    height: 75%;
-  }
