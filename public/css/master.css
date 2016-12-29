@@ -9,6 +9,13 @@ body {
 	line-height: 20px;
 }
 
+#new_task{
+  width: 300px;
+}
+
+#due{
+  width: 60px;
+}
 /*table appearence*/
 table, td, thead, tr {
   border: 1px solid black;
