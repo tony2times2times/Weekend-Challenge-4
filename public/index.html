@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <script src="scripts/vendors/jquery-3.1.1.min.js" charset="utf-8"></script>
     <script src="scripts/vendors/jquery-ui.min.js" charset="utf-8"></script>
+    <script src="scripts/vendors/moment.min.js" charset="utf-8"></script>
     <script src="scripts/client.js" charset="utf-8"></script>
     <link rel="css/jquery-ui.min.css" href="css/master.css">
     <link rel="stylesheet" href="css/master.css">
     <title>TO DO</title>
-  </head>
-  <body>
-    <div id="display">
-      <input type="text" placeholder="New Task" id='new_task'>
-      <button type="button" id='post_task'>Add New Task</button>
-      <div id='clock'>
+</head>
 
-      </div>
-      <div id="tasks">
+<body>
+    <div id="display">
+        <input type="text" placeholder="New Task" id='new_task'>
+        Time until due:
+        <input type="number" placeholder="24" id='due'>
+        <select id='time_unit'>
+          <option>Hours</option>
+          <option value="days">Days</option>
+          <option value="weeks">Weeks</option>
+        </select>
+        <button type="button" id='post_task'>Add New Task</button>
+        <div id='clock'>
+
+        </div>
+        <div id="tasks">
+        </div>
     </div>
-    </div>
-  </body>
+</body>
+
 </html>

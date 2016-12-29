@@ -1,7 +1,6 @@
 //global variables
 var tasks = [];
 var debug = true;
-setInterval(displayClock(), 1000);
 
 $(function() {
     if (debug) {
@@ -13,7 +12,7 @@ $(function() {
 
 //event listeners this will be called multiple times so .unbind is used to prevent douplicate clicks
 function enable() {
-    $('#post_task').unbind().on('click', postTask);
+    $('#post_task').unbind().on('click', createTask);
     $('.complete').unbind().on('click', putTask);
     $('.delete').unbind().on('click', warning);
     $("#new_task").unbind().keydown(function(event) {
@@ -21,7 +20,12 @@ function enable() {
             $("#post_task").click();
         }
     });
-}
+    $("#due").unbind().keydown(function(event) {
+        if (event.keyCode == 13) {
+            $("#post_task").click();
+        }
+    });
+  }
 
 //makes ajax get call to the server and pushes recieved tasks to the global tasks variable
 function getTasks() {
@@ -47,15 +51,37 @@ function getTasks() {
     });
 }
 
-//makes ajax post to the server and then gets tasks to update the local task list
-function postTask() {
+function createTask() {
+    var dueInMS;
+    //defaul due is in 24 hours
+    if ($('#due').val() === '') {
+        dueInMS = 86400000;
+    } else {
+        if ($('#time_unit').val() === 'Days') {
+            dueInMS = 86400000 * $('#due').val();
+        } else if ($('#time_unit').val() === 'Weeks') {
+            dueInMS = 604800000 * $('#due').val();
+        } else {
+            //default time unit is hours
+            dueInMS = 3600000 * $('#due').val();
+        }
+    }
     var newTask = {
-        task: $('#new_task').val()
+        task: $('#new_task').val(),
+        dueInMS: dueInMS
     };
+    //reset input boxes
+    $('#due').val('');
+    $('#new_task').val('');
+    //post task to server
+    postTask(newTask);
+}
+
+//makes ajax post to the server and then gets tasks to update the local task list
+function postTask(newTask) {
     if (debug) {
         console.log('sending a new task ' + newTask);
     }
-    $('#new_task').val('');
     $.ajax({
         type: "POST",
         url: '/postTask',
@@ -87,8 +113,8 @@ function putTask() {
             if (debug) {
                 console.log('back from postTasks: ', response);
             }
-            //after a task is updated the current task list is requested from the server
-            getTasks();
+            //after a task is updated wait a tenth of a second for the task toupdate then get the current task list is requested from the server
+            setTimeout(getTasks, 100);
         },
         error: function() {
             if (debug) {
@@ -99,12 +125,12 @@ function putTask() {
 }
 
 //display warning message before deleteing a task
-//I know the instructions said to use vannilla JS but the built in confirm cant be stylized and is boring
+//I know the instructions said to use vannilla JS but the built in confirm cant be stylized
 function warning() {
     //hide everything on the DOM
     $('#display').hide();
     //change background to grey
-    $("body").css("background-color", "silver");
+    $("body").css("background-color", "#EFEFEF");
     //pullin task id from data attribute
     var taskID = {
         id: this.getAttribute('data')
@@ -173,7 +199,14 @@ function displayTasks() {
         }
         var allTasks = '<table> <tr><td>Task</td><td>Complete Task</td><td>Delete Task</td>';
         for (var i = 0; i < tasks.length; i++) {
-            allTasks += '<tr><td  id="first" class=' + tasks[i].active + '>' + tasks[i].task + '</td>';
+            //if task is complete give it a class of completed
+            if (tasks[i].active === false) {
+                allTasks += '<tr class="completed"><td class= "first">' + tasks[i].task + '</td>';
+            }
+            //if task is active give it a class equal to its status
+            else {
+                allTasks += '<tr class="' + tasks[i].status + '"><td class= "first">' + tasks[i].task + '</td>';
+            }
             allTasks += '<td><button type="button" class="complete ' + tasks[i].active + '_button" data="' +
                 tasks[i].id + '"></button> </td>';
             allTasks += '<td><button type="button" class="delete" data="' + tasks[i].id +
@@ -191,13 +224,4 @@ function displayTasks() {
     }
     //after everything is printed to the DOM enable the clickibles
     enable();
-}
-
-function displayClock() {
-    //var clock=setInterval(displayClock(),1000);
-    console.log('in display clock');
-    var dt = new Date();
-    var utcDate = dt.toUTCString();
-    $('#clock').html('current time: '+utcDate);
-    alert(utcDate);
 }
