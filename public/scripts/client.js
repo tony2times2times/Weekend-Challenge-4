@@ -25,7 +25,7 @@ function enable() {
             $("#post_task").click();
         }
     });
-  }
+}
 
 //makes ajax get call to the server and pushes recieved tasks to the global tasks variable
 function getTasks() {
@@ -41,7 +41,7 @@ function getTasks() {
                 tasks.push(response[i]);
                 //when tasks are recieved from the server they are printed to the DOM
             }
-            displayTasks();
+            timeLeft();
         },
         error: function() {
             if (debug) {
@@ -57,9 +57,9 @@ function createTask() {
     if ($('#due').val() === '') {
         dueInMS = 86400000;
     } else {
-        if ($('#time_unit').val() === 'Days') {
+        if ($('#time_unit').val() === 'days') {
             dueInMS = 86400000 * $('#due').val();
-        } else if ($('#time_unit').val() === 'Weeks') {
+        } else if ($('#time_unit').val() === 'weeks') {
             dueInMS = 604800000 * $('#due').val();
         } else {
             //default time unit is hours
@@ -155,7 +155,7 @@ function warning() {
             },
             close: function(event, ui) {
                 //when this window is closed the taks will be displayed again
-                displayTasks();
+                timeLeft();
                 //remove the warning window
                 $(this).remove();
 
@@ -190,14 +190,15 @@ function displayTasks() {
     if (debug) {
         console.log('now in display tasks');
     }
+    //make sure main screen is viewable, very important because the DELETE warning message hides everything
     $('#display').show();
     $("body").css("background-color", "white");
-    //check to make sure there are tasks to display
+    //check to make sure there are tasks to display if so display them if not display instructions
     if (tasks.length > 0) {
         if (debug) {
             console.log("now printing tasks: " + tasks);
         }
-        var allTasks = '<table> <tr><td>Task</td><td>Complete Task</td><td>Delete Task</td>';
+        var allTasks = '<table> <tr><td>Task</td><td>Time Left</td><td>Complete Task</td><td>Delete Task</td>';
         for (var i = 0; i < tasks.length; i++) {
             //if task is complete give it a class of completed
             if (tasks[i].active === false) {
@@ -207,6 +208,7 @@ function displayTasks() {
             else {
                 allTasks += '<tr class="' + tasks[i].status + '"><td class= "first">' + tasks[i].task + '</td>';
             }
+            allTasks += '<td>' + tasks[i].timeLeft + '</td>';
             allTasks += '<td><button type="button" class="complete ' + tasks[i].active + '_button" data="' +
                 tasks[i].id + '"></button> </td>';
             allTasks += '<td><button type="button" class="delete" data="' + tasks[i].id +
@@ -224,4 +226,33 @@ function displayTasks() {
     }
     //after everything is printed to the DOM enable the clickibles
     enable();
+}
+
+//uses moment.js to calculate current time left for each task and add it has a property to that task
+function timeLeft() {
+    for (var i = 0; i < tasks.length; i++) {
+        var timeLeft = tasks[i].due_in_ms - moment().diff(tasks[i].created);
+        if (timeLeft < 0) {
+            tasks[i].timeLeft = "due";
+        } else {
+            timeLeft = moment.duration(timeLeft);
+            if (timeLeft.years() > 0) {
+                tasks[i].timeLeft = timeLeft.years() + ' Years';
+            } else if (timeLeft.months() > 0) {
+                tasks[i].timeLeft = timeLeft.months() + ' Months';
+            } else if (timeLeft.weeks() > 0) {
+                tasks[i].timeLeft = timeLeft.weeks() + ' Weeks';
+            } else if (timeLeft.days() > 0) {
+                tasks[i].timeLeft = timeLeft.days() + ' Days';
+            } else if (timeLeft.hours() > 0) {
+                tasks[i].timeLeft = timeLeft.hours() + ' Hours';
+            } else if (timeLeft.minutes() > 0) {
+                tasks[i].timeLeft = timeLeft.minutes() + ' Minutes';
+            } else {
+                tasks[i].timeLeft = timeLeft.seconds() + ' Seconds';
+            }
+        }
+    }
+//once all tasks have been assigned a time left attribute print the tasks
+displayTasks();
 }

@@ -41,6 +41,7 @@ app.get('/getTasks', function(req, res) {
 });
 
 //adds status attribute to taks based off thier age and due date
+//I would probably have this on the client side normally but I wanted to practice on the server
 function setStatus(tasks) {
     for (var i = 0; i < tasks.length; i++) {
        var msSinceCreation = moment().diff(tasks[i].created);
