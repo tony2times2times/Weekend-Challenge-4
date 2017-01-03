@@ -30,7 +30,9 @@ thead, tr {
   text-align: center;
   padding: 5px;
 }
-
+.time_left{
+  width : 75px;
+}
 .delete{
   background: url("../images/cyberman.png") center no-repeat;
   height: 25px;
@@ -76,7 +78,6 @@ thead, tr {
 
 /*warning appearence*/
 .ui-dialog{
-  background: url("../images/cyberman.png") center no-repeat;
   height: 100%;
   vertical-align: text-bottom;
   }​

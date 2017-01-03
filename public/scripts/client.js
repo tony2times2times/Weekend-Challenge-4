@@ -2,7 +2,11 @@
 var tasks = [];
 var debug = true;
 
+
 $(function() {
+    if (debug) {
+      console.log('Document is ready.');
+    }
     if (debug) {
         console.log('Document ready!');
     }
@@ -15,16 +19,15 @@ function enable() {
     $('#post_task').unbind().on('click', createTask);
     $('.complete').unbind().on('click', putTask);
     $('.delete').unbind().on('click', warning);
-    $("#new_task").unbind().keydown(function(event) {
-        if (event.keyCode == 13) {
-            $("#post_task").click();
-        }
-    });
-    $("#due").unbind().keydown(function(event) {
-        if (event.keyCode == 13) {
-            $("#post_task").click();
-        }
-    });
+    $("#new_task").unbind().keydown(clicky);
+    $("#due").unbind().keydown(clicky);
+    $("#time_unit").unbind().keydown(clicky);
+}
+//when enter is clicked submit the current task
+function clicky() {
+    if (event.keyCode == 13) {
+        $("#post_task").click();
+    }
 }
 
 //makes ajax get call to the server and pushes recieved tasks to the global tasks variable
@@ -137,7 +140,7 @@ function warning() {
     };
     //display a modal asking if the user is sure they want to delete the task
     $('<div id="warning"></div>').appendTo('body')
-        .html('<div><h1>Cyberman</h1> <h6>DELETE DELETE DELETE! <br>Are you sure you want to DELETE this task?</h6></div>')
+        .html('<div><h1>Cyberman</h1> <h3>DELETE DELETE DELETE!</h3> <img src="images/cyberman.png"> <h6> <br>Are you sure you want to DELETE this task?</h6></div>')
         .dialog({
             modal: true,
             zIndex: 10000,
@@ -198,10 +201,12 @@ function displayTasks() {
         if (debug) {
             console.log("now printing tasks: " + tasks);
         }
-        var allTasks = '<table> <tr><td>Task</td><td>Time Left</td><td>Complete Task</td><td>Delete Task</td>';
+        var allTasks = '<table> <tr><td>Task</td><td class="time_left">Time Left</td><td>Complete Task</td><td>Delete Task</td>';
         for (var i = 0; i < tasks.length; i++) {
             //if task is complete give it a class of completed
             if (tasks[i].active === false) {
+                //If task is complete timeLeft is not applicable. this sets it to an empty string so it will not br printed
+                tasks[i].timeLeft = '';
                 allTasks += '<tr class="completed"><td class= "first">' + tasks[i].task + '</td>';
             }
             //if task is active give it a class equal to its status
@@ -230,11 +235,19 @@ function displayTasks() {
 
 //uses moment.js to calculate current time left for each task and add it has a property to that task
 function timeLeft() {
+    if (debug) {
+        console.log('adding timeLeft property to all tasks');
+    }
     for (var i = 0; i < tasks.length; i++) {
-        var timeLeft = tasks[i].due_in_ms - moment().diff(tasks[i].created);
+        //find out how long ago the task was created returns time in milliseconds
+        var timeSinceCreation = moment().diff(tasks[i].created);
+        //find difference between the total time to complete the task and how much time has passed since creation
+        var timeLeft = tasks[i].due_in_ms - timeSinceCreation;
         if (timeLeft < 0) {
+            //if time is up mark the task as due
             tasks[i].timeLeft = "due";
         } else {
+            //if there is still time left print out the remaining time in the largest unit possible
             timeLeft = moment.duration(timeLeft);
             if (timeLeft.years() > 0) {
                 tasks[i].timeLeft = timeLeft.years() + ' Years';
@@ -249,10 +262,10 @@ function timeLeft() {
             } else if (timeLeft.minutes() > 0) {
                 tasks[i].timeLeft = timeLeft.minutes() + ' Minutes';
             } else {
-                tasks[i].timeLeft = timeLeft.seconds() + ' Seconds';
+                tasks[i].timeLeft = '< 1 minute';
             }
         }
     }
-//once all tasks have been assigned a time left attribute print the tasks
-displayTasks();
+    //once all tasks have been assigned a time left attribute print the tasks
+    displayTasks();
 }
